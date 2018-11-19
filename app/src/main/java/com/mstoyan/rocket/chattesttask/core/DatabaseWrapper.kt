@@ -1,24 +1,94 @@
 package com.mstoyan.rocket.chattesttask.core
 
+import android.app.Activity
+import android.graphics.Bitmap
+import android.net.Uri
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
+import org.joda.time.DateTime
+import com.google.android.gms.common.util.IOUtils.toByteArray
+import android.R.attr.bitmap
+import java.io.ByteArrayOutputStream
+
 
 class DatabaseWrapper {
 
     companion object {
         const val MESSAGES_KEY = "messages"
     }
-    val database: DatabaseReference
 
-    constructor(){
-        database = FirebaseDatabase.getInstance().reference
-    }
+    private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
     fun saveMessage(message: Message){
         database.child(MESSAGES_KEY).push().setValue(message)
     }
 
-    fun loadMessages(){
+    fun saveImage(uri: Uri, uid: String, activity: Activity){
+        val tempMessage = Message(0,"",Message.TYPE_IMAGE)
+        database.child(MESSAGES_KEY).push()
+            .setValue(tempMessage
+            ) { databaseError, databaseReference ->
+                if (databaseError == null) {
+                    val key = databaseReference.key
+                    val storageReference = FirebaseStorage.getInstance()
+                        .getReference(uid)
+                        .child(key!!)
+                        .child(uri.lastPathSegment!!)
 
+                    storageReference.putFile(uri).addOnCompleteListener(
+                        activity
+                    ) { task: Task<UploadTask.TaskSnapshot>->
+                        if (task.isSuccessful) {
+                            val message = Message(0, task.result!!.metadata!!.reference!!.downloadUrl.toString(),
+                                Message.TYPE_IMAGE)
+                            database.child(MESSAGES_KEY).child(key)
+                                .setValue(message)
+                        } else {
+                            TODO("add error handling")
+                        }
+                    }
+                } else {
+                    TODO("add error handling")
+                }
+            }
+    }
+
+    fun saveImage(bmp: Bitmap, uid: String, activity: Activity){
+        val tempMessage = Message(0,"",Message.TYPE_IMAGE)
+        database.child(MESSAGES_KEY).push()
+            .setValue(tempMessage
+            ) { databaseError, databaseReference ->
+                if (databaseError == null) {
+                    val key = databaseReference.key
+                    val fileName = uid + DateTime.now().millis
+                    val storageReference = FirebaseStorage.getInstance()
+                        .getReference(uid)
+                        .child(key!!)
+                        .child(fileName)
+
+                    val baos = ByteArrayOutputStream()
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    val data = baos.toByteArray()
+
+
+                    storageReference.putBytes(data).addOnCompleteListener(
+                        activity
+                    ) { task: Task<UploadTask.TaskSnapshot>->
+                        if (task.isSuccessful) {
+                            val message = Message(0, task.result!!.metadata!!.reference!!.downloadUrl.toString(),
+                                Message.TYPE_IMAGE)
+                            database.child(MESSAGES_KEY).child(key)
+                                .setValue(message)
+                        } else {
+                            TODO("add error handling")
+                        }
+                    }
+                } else {
+                    TODO("add error handling")
+                }
+            }
     }
 }

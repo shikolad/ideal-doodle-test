@@ -14,23 +14,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mstoyan.rocket.chattesttask.R
 
-class UserAuth {
+class UserAuth(activity: Activity) {
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firebaseUser: FirebaseUser? = null
     private var googleApiClient: GoogleApiClient? = null
 
-    constructor(activity: Activity){
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(activity.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        googleApiClient = GoogleApiClient.Builder(activity)
-            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-            .build()
-
-        firebaseUser = firebaseAuth.currentUser
-    }
+    val uid: String
+        get() = firebaseUser!!.uid
 
     fun getFirebaseUser(): FirebaseUser?{
         return firebaseUser
@@ -48,9 +39,6 @@ class UserAuth {
             val credential: AuthCredential = GoogleAuthProvider.getCredential(signInAccount.idToken, null)
             FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener { task ->
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
                     if (!task.isSuccessful) {
                         Toast.makeText(
                             activity, "Authentication failed.",
@@ -66,5 +54,16 @@ class UserAuth {
             Toast.makeText(activity, "Please login using google account", Toast.LENGTH_SHORT).show()
         }
         return result.isSuccess
+    }
+
+    init {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(activity.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleApiClient = GoogleApiClient.Builder(activity)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+            .build()
+        firebaseUser = firebaseAuth.currentUser
     }
 }
