@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExtendedActionButton">
+        <attr name="text" format="string" localization="suggested" />
+        <attr name="font" format="reference" />
+        <attr name="textSize" format="dimension" />
+        <attr name="textAlpha" format="float" />
+    </declare-styleable>
+</resources>

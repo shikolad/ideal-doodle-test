@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ChatTestTask</string>
+    <string name="action_settings">Settings</string>
+
+    #icons
+    <string name="icon_add">\ue605</string>
+    <string name="icon_geo">\ue604</string>
+    <string name="icon_album">\ue603</string>
+    <string name="icon_camera">\ue602</string>
+    <string name="icon_text">\ue601</string>
+    <string name="icon_send">\ue600</string>
+</resources>
