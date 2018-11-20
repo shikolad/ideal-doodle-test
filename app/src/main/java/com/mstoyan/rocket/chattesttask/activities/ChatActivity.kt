@@ -29,7 +29,6 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-        setSupportActionBar(toolbar)
 
         fabPlus.setOnClickListener{
             if (fabAlbum.visibility == View.VISIBLE){
@@ -86,8 +85,10 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
             RC_CAMERA -> {
-                val bmp = data!!.getExtras()!!.get("data") as Bitmap
-                databaseWrapper!!.saveImage(bmp, userAuth!!.uid, this)
+                if (RESULT_OK == resultCode) {
+                    val bmp = data!!.getExtras()!!.get("data") as Bitmap
+                    databaseWrapper!!.saveImage(bmp, userAuth!!.uid, this)
+                }
             }
             RC_GALLERY -> {
                 if (RESULT_OK == resultCode){

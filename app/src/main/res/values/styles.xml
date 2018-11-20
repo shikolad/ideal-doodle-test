@@ -25,4 +25,40 @@
         <item name="textAlpha">0.64</item>
     </style>
 
+    <style name="AppTheme.MediumText" parent="AppTheme">
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:color">@color/light_gray</item>
+    </style>
+
+    <style name="AppTheme.LightText" parent="AppTheme">
+        <item name="android:fontFamily">@font/roboto_light</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:color">@color/dark_gray</item>
+    </style>
+
+    <style name="AppTheme.Tale" parent="AppTheme">
+        <item name="srcCompat">@drawable/triangle</item>
+        <item name="android:layout_gravity">right|top</item>
+        <item name="android:layout_height">@dimen/tale_size</item>
+        <item name="android:layout_width">@dimen/tale_size</item>
+    </style>
+
+    <style name="AppTheme.MessageContainer" parent="AppTheme">
+        <item name="android:background">@drawable/list_item_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
+    <style name="AppTheme.MessageInnerItem" parent="AppTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/double_tale_size</item>
+        <item name="android:layout_marginLeft">@dimen/tale_size</item>
+        <item name="android:layout_marginBottom">@dimen/tale_size</item>
+        <item name="android:layout_marginTop">@dimen/tale_size</item>
+        <item name="android:layout_margin">@dimen/tale_size</item>
+    </style>
+
 </resources>

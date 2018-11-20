@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.AppCompatTextView
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_gravity="center"
-        tools:text="Preview" />
+        style="@style/AppTheme.MessageContainer"
+        tools:layout_gravity="center">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            style="@style/AppTheme.Tale"/>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+            style="@style/AppTheme.LightText"
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/tale_size"
+            android:layout_marginBottom="@dimen/tale_size"
+            android:layout_marginLeft="@dimen/tale_size"
+            android:layout_marginRight="@dimen/double_tale_size"
+            tools:layout_gravity="center"
+            tools:text="Preview" />
+</FrameLayout>

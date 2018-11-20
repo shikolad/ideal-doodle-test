@@ -1,7 +1,6 @@
 package com.mstoyan.rocket.chattesttask.viewholders
 
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
@@ -24,7 +23,7 @@ abstract class MessageHolder(v: View) : RecyclerView.ViewHolder(v) {
 }
 
 class TextHolder(v: View) : MessageHolder(v) {
-    private val textView = v as AppCompatTextView
+    private val textView = v.findViewById<AppCompatTextView>(R.id.content)
 
     override fun getType(): Int {
         return Message.TYPE_TEXT
@@ -36,7 +35,7 @@ class TextHolder(v: View) : MessageHolder(v) {
 }
 
 class GeoHolder(v: View) : MessageHolder(v) {
-    private val image = v as AppCompatImageView
+    private val image = v.findViewById<AppCompatImageView>(R.id.content)
 
     override fun getType(): Int {
         return Message.TYPE_GEO
@@ -48,7 +47,7 @@ class GeoHolder(v: View) : MessageHolder(v) {
 }
 
 class ImageHolder(v: View) : MessageHolder(v) {
-    private val image = v as AppCompatImageView
+    private val image = v.findViewById<AppCompatImageView>(R.id.content)
 
     override fun getType(): Int {
         return Message.TYPE_IMAGE

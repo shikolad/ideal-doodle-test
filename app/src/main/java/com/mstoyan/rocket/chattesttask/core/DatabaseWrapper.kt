@@ -3,6 +3,7 @@ package com.mstoyan.rocket.chattesttask.core
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -23,6 +24,21 @@ class DatabaseWrapper {
     val databaseReference
         get() = database
 
+    class OnImageCompleteListener(private val key: String, private val database: DatabaseReference):
+        OnCompleteListener<UploadTask.TaskSnapshot>{
+
+        override fun onComplete(task: Task<UploadTask.TaskSnapshot>) {
+            if (task.isSuccessful) {
+                val message = Message(0, task.result!!.metadata!!.reference!!.toString(),
+                    Message.TYPE_IMAGE)
+                database.child(MESSAGES_KEY).child(key)
+                    .setValue(message)
+            } else {
+                TODO("add error handling")
+            }
+        }
+    }
+
     fun saveMessage(message: Message){
         database.child(MESSAGES_KEY).push().setValue(message)
     }
@@ -39,18 +55,7 @@ class DatabaseWrapper {
                         .child(key!!)
                         .child(uri.lastPathSegment!!)
 
-                    storageReference.putFile(uri).addOnCompleteListener(
-                        activity
-                    ) { task: Task<UploadTask.TaskSnapshot>->
-                        if (task.isSuccessful) {
-                            val message = Message(0, task.result!!.metadata!!.reference!!.toString(),
-                                Message.TYPE_IMAGE)
-                            database.child(MESSAGES_KEY).child(key)
-                                .setValue(message)
-                        } else {
-                            TODO("add error handling")
-                        }
-                    }
+                    storageReference.putFile(uri).addOnCompleteListener(activity, OnImageCompleteListener(key, database))
                 } else {
                     TODO("add error handling")
                 }
@@ -75,18 +80,7 @@ class DatabaseWrapper {
                     val data = baos.toByteArray()
 
 
-                    storageReference.putBytes(data).addOnCompleteListener(
-                        activity
-                    ) { task: Task<UploadTask.TaskSnapshot>->
-                        if (task.isSuccessful) {
-                            val message = Message(0, task.result!!.metadata!!.reference!!.downloadUrl.toString(),
-                                Message.TYPE_IMAGE)
-                            database.child(MESSAGES_KEY).child(key)
-                                .setValue(message)
-                        } else {
-                            TODO("add error handling")
-                        }
-                    }
+                    storageReference.putBytes(data).addOnCompleteListener(activity, OnImageCompleteListener(key, database))
                 } else {
                     TODO("add error handling")
                 }
