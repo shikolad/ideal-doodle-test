@@ -6,8 +6,7 @@ class Message {
     var msgType: Int = 0
 
     constructor(){}
-    constructor(id: Int, text: String, msgType: Int){
-        this.id = id
+    constructor(text: String, msgType: Int){
         this.text = text
         this.msgType = msgType
     }

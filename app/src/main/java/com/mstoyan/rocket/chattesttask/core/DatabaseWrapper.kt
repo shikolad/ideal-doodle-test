@@ -29,7 +29,7 @@ class DatabaseWrapper {
 
         override fun onComplete(task: Task<UploadTask.TaskSnapshot>) {
             if (task.isSuccessful) {
-                val message = Message(0, task.result!!.metadata!!.reference!!.toString(),
+                val message = Message(task.result!!.metadata!!.reference!!.toString(),
                     Message.TYPE_IMAGE)
                 database.child(MESSAGES_KEY).child(key)
                     .setValue(message)
@@ -44,7 +44,7 @@ class DatabaseWrapper {
     }
 
     fun saveImage(uri: Uri, uid: String, activity: Activity){
-        val tempMessage = Message(0,"",Message.TYPE_IMAGE)
+        val tempMessage = Message("",Message.TYPE_IMAGE)
         database.child(MESSAGES_KEY).push()
             .setValue(tempMessage
             ) { databaseError, databaseReference ->
@@ -63,7 +63,7 @@ class DatabaseWrapper {
     }
 
     fun saveImage(bmp: Bitmap, uid: String, activity: Activity){
-        val tempMessage = Message(0,"",Message.TYPE_IMAGE)
+        val tempMessage = Message("",Message.TYPE_IMAGE)
         database.child(MESSAGES_KEY).push()
             .setValue(tempMessage
             ) { databaseError, databaseReference ->

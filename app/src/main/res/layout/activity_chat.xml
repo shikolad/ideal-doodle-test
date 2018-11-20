@@ -10,12 +10,26 @@
 
     <include layout="@layout/content_chat"/>
 
+    <View
+            android:id="@+id/transparent"
+            android:visibility="invisible"
+            android:background="@color/white"
+            android:alpha="0.6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     <com.mstoyan.rocket.chattesttask.views.ExtendedActionButton
             tools:visibility="visible"
             app:text="@string/icon_geo"
             style="@style/AppTheme.FloatingButton"
             android:layout_marginBottom="304dp"
             android:id="@+id/fabGeo"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/geo_tip"
+            style="@style/AppTheme.FabTooltip"
+            app:layout_anchor="@id/fabGeo"
+            android:text="@string/ui_geo"/>
 
     <com.mstoyan.rocket.chattesttask.views.ExtendedActionButton
             tools:visibility="visible"
@@ -24,12 +38,24 @@
             android:layout_marginBottom="232dp"
             android:id="@+id/fabAlbum"/>
 
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/album_tip"
+            style="@style/AppTheme.FabTooltip"
+            app:layout_anchor="@id/fabAlbum"
+            android:text="@string/ui_album"/>
+
     <com.mstoyan.rocket.chattesttask.views.ExtendedActionButton
             tools:visibility="visible"
             app:text="@string/icon_camera"
             style="@style/AppTheme.FloatingButton"
             android:layout_marginBottom="160dp"
             android:id="@+id/fabCamera"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/cam_tip"
+            style="@style/AppTheme.FabTooltip"
+            app:layout_anchor="@id/fabCamera"
+            android:text="@string/ui_camera"/>
 
     <com.mstoyan.rocket.chattesttask.views.ExtendedActionButton
             tools:visibility="visible"
@@ -38,11 +64,45 @@
             android:layout_marginBottom="88dp"
             android:id="@+id/fabMessage"/>
 
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/msg_tip"
+            style="@style/AppTheme.FabTooltip"
+            app:layout_anchor="@id/fabMessage"
+            android:text="@string/ui_message"/>
+
     <com.mstoyan.rocket.chattesttask.views.ExtendedActionButton
             android:id="@+id/fabPlus"
             app:text="@string/icon_add"
             android:layout_marginBottom="@dimen/fab_margin"
             style="@style/AppTheme.FloatingButton"
             android:visibility="visible"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/textInput"
+            android:layout_gravity="bottom"
+            android:visibility="invisible"
+            android:background="@color/white"
+            tools:visibility="visible"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@color/dark_gray"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:hint="@string/ui_enter_message"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSend"
+            android:fontFamily="@font/icomoon"
+            android:textSize="24sp"
+            android:text="@string/icon_send"
+            android:textColor="@color/light_gray"
+            android:background="@null"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:layout_anchor="@id/textInput"
+            app:layout_anchorGravity="right|center_vertical"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,7 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="fab_size">56dp</dimen>
+    <dimen name="fab_tooltip_margin">88dp</dimen>
 
     <dimen name="list_item_padding">8dp</dimen>
     <dimen name="tale_size">8dp</dimen>

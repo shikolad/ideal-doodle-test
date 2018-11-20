@@ -1,10 +1,17 @@
 package com.mstoyan.rocket.chattesttask.activities
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mstoyan.rocket.chattesttask.R
 import com.mstoyan.rocket.chattesttask.adapters.MessageAdapter
@@ -25,26 +32,34 @@ class ChatActivity : AppCompatActivity() {
 
     private var userAuth: UserAuth? = null
     private var databaseWrapper: DatabaseWrapper? = null
+    private var messagesLayoutManager: LinearLayoutManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        fabPlus.setOnClickListener{
+        val clickListener = View.OnClickListener{
             if (fabAlbum.visibility == View.VISIBLE){
-                fabAlbum.hide()
-                fabCamera.hide()
-                fabGeo.hide()
-                fabMessage.hide()
+                hideInterface()
             } else {
                 fabAlbum.show()
                 fabCamera.show()
                 fabGeo.show()
                 fabMessage.show()
+                album_tip.visibility = View.VISIBLE
+                cam_tip.visibility = View.VISIBLE
+                geo_tip.visibility = View.VISIBLE
+                msg_tip.visibility = View.VISIBLE
+                transparent.startAnimation(getAnimation(0f, 1f))
             }
         }
 
+        fabPlus.setOnClickListener(clickListener)
+
+        transparent.setOnClickListener(clickListener)
+
         fabAlbum.setOnClickListener{
+            hideInterface()
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
@@ -52,17 +67,52 @@ class ChatActivity : AppCompatActivity() {
         }
 
         fabCamera.setOnClickListener{
+            hideInterface()
             val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(cameraIntent, RC_CAMERA)
         }
 
+        btnSend.setOnClickListener{
+            val message = textInput.text.toString()
+            if (message.isNotEmpty()) {
+                databaseWrapper!!.saveMessage(Message(message, Message.TYPE_TEXT))
+                hideTextInput()
+            }
+        }
+
         fabGeo.setOnClickListener{
-            databaseWrapper!!.saveMessage(Message(0, "", Message.TYPE_GEO))
+            TODO("Implement")
         }
 
         fabMessage.setOnClickListener {
-            databaseWrapper!!.saveMessage(Message(0, "test", Message.TYPE_TEXT))
+            hideInterface()
+            btnSend.visibility = View.VISIBLE
+            textInput.visibility = View.VISIBLE
+            textInput.requestFocus()
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+            fabPlus.hide()
         }
+
+        textInput.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                btnSend.setTextColor(
+                    ContextCompat.getColor(this@ChatActivity,
+                        if (s.toString().isEmpty())
+                            R.color.light_gray
+                        else R.color.colorAccent)
+                )
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //do nothing
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                //do nothing
+            }
+
+        })
 
         userAuth = UserAuth(this)
         if (userAuth!!.getFirebaseUser() == null){
@@ -70,6 +120,28 @@ class ChatActivity : AppCompatActivity() {
         } else {
             initDatabase()
         }
+    }
+
+    private fun hideTextInput() {
+        val imm = getSystemService(
+            Context.INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+        imm.hideSoftInputFromWindow(textInput.windowToken, 0)
+        textInput.visibility = View.INVISIBLE
+        btnSend.visibility = View.INVISIBLE
+        fabPlus.show()
+    }
+
+    private fun hideInterface() {
+        fabAlbum.hide()
+        fabCamera.hide()
+        fabGeo.hide()
+        fabMessage.hide()
+        album_tip.visibility = View.INVISIBLE
+        cam_tip.visibility = View.INVISIBLE
+        geo_tip.visibility = View.INVISIBLE
+        msg_tip.visibility = View.INVISIBLE
+        transparent.startAnimation(getAnimation(1f, 0f))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -102,9 +174,39 @@ class ChatActivity : AppCompatActivity() {
 
     private fun initDatabase() {
         databaseWrapper = DatabaseWrapper()
-        val layoutManager = LinearLayoutManager(this)
-        layoutManager.stackFromEnd = true
-        messageList.layoutManager = layoutManager
+        messagesLayoutManager = LinearLayoutManager(this)
+        messagesLayoutManager!!.stackFromEnd = true
+        messageList.layoutManager = messagesLayoutManager
         messageList.adapter = MessageAdapter(databaseWrapper!!.databaseReference.child(DatabaseWrapper.MESSAGES_KEY))
+    }
+
+    private fun getAnimation(start: Float, end: Float): Animation{
+        transparent.animation?.cancel()
+
+        val result = AlphaAnimation(start, end)
+        result.duration = 300
+        result.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+                if (start == 0f) transparent.visibility = View.VISIBLE
+            }
+
+            override fun onAnimationEnd(animation: Animation) {
+                if (start == 1f) transparent.visibility = View.INVISIBLE
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {
+
+            }
+        })
+        return result
+    }
+
+    override fun onBackPressed() {
+        if (textInput.isFocused){
+            textInput.setText("")
+            hideTextInput()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

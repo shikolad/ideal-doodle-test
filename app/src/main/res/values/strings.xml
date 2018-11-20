@@ -9,4 +9,9 @@
     <string name="icon_camera">\ue602</string>
     <string name="icon_text">\ue601</string>
     <string name="icon_send">\ue600</string>
+    <string name="ui_message">Message</string>
+    <string name="ui_camera">Camera</string>
+    <string name="ui_album">Album</string>
+    <string name="ui_geo">Geo</string>
+    <string name="ui_enter_message">Enter message</string>
 </resources>

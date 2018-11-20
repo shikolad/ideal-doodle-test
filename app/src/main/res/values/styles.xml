@@ -61,4 +61,13 @@
         <item name="android:layout_margin">@dimen/tale_size</item>
     </style>
 
+    <style name="AppTheme.FabTooltip" parent="AppTheme.LightText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">right</item>
+        <item name="layout_anchorGravity">center_vertical</item>
+        <item name="android:layout_marginRight">@dimen/fab_tooltip_margin</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
 </resources>
