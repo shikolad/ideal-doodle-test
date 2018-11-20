@@ -5,15 +5,14 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mstoyan.rocket.chattesttask.R
+import com.mstoyan.rocket.chattesttask.adapters.MessageAdapter
 import com.mstoyan.rocket.chattesttask.core.DatabaseWrapper
 import com.mstoyan.rocket.chattesttask.core.Message
 import com.mstoyan.rocket.chattesttask.core.auth.UserAuth
 import kotlinx.android.synthetic.main.activity_chat.*
-import android.R.attr.data
-import androidx.core.app.NotificationCompat.getExtras
-
-
+import kotlinx.android.synthetic.main.content_chat.*
 
 
 class ChatActivity : AppCompatActivity() {
@@ -70,7 +69,7 @@ class ChatActivity : AppCompatActivity() {
         if (userAuth!!.getFirebaseUser() == null){
             startActivityForResult(userAuth!!.getSignInIntent(), RC_SIGN_IN)
         } else {
-            databaseWrapper = DatabaseWrapper()
+            initDatabase()
         }
     }
 
@@ -81,7 +80,7 @@ class ChatActivity : AppCompatActivity() {
         when (requestCode){
             RC_SIGN_IN -> {
                 if (userAuth!!.proceedUserAuth(data, this)){
-                    databaseWrapper = DatabaseWrapper()
+                    initDatabase()
                 } else {
                     finish()
                 }
@@ -98,5 +97,13 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun initDatabase() {
+        databaseWrapper = DatabaseWrapper()
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+        messageList.layoutManager = layoutManager
+        messageList.adapter = MessageAdapter(databaseWrapper!!.databaseReference.child(DatabaseWrapper.MESSAGES_KEY))
     }
 }

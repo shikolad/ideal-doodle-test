@@ -1,10 +1,11 @@
 package com.mstoyan.rocket.chattesttask.adapters
 
 import android.view.LayoutInflater
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.FirebaseStorage
 import com.mstoyan.rocket.chattesttask.R
 import com.mstoyan.rocket.chattesttask.core.Message
 import com.mstoyan.rocket.chattesttask.viewholders.GeoHolder
@@ -40,6 +41,6 @@ class MessageAdapter(
     }
 
     override fun populateViewHolder(p0: MessageHolder?, p1: Message?, p2: Int) {
-
+        p0!!.bind(p1!!)
     }
 }

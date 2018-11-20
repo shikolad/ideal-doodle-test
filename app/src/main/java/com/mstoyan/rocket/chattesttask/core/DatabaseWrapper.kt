@@ -9,8 +9,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import org.joda.time.DateTime
-import com.google.android.gms.common.util.IOUtils.toByteArray
-import android.R.attr.bitmap
 import java.io.ByteArrayOutputStream
 
 
@@ -21,6 +19,9 @@ class DatabaseWrapper {
     }
 
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    val databaseReference
+        get() = database
 
     fun saveMessage(message: Message){
         database.child(MESSAGES_KEY).push().setValue(message)
@@ -42,7 +43,7 @@ class DatabaseWrapper {
                         activity
                     ) { task: Task<UploadTask.TaskSnapshot>->
                         if (task.isSuccessful) {
-                            val message = Message(0, task.result!!.metadata!!.reference!!.downloadUrl.toString(),
+                            val message = Message(0, task.result!!.metadata!!.reference!!.toString(),
                                 Message.TYPE_IMAGE)
                             database.child(MESSAGES_KEY).child(key)
                                 .setValue(message)
