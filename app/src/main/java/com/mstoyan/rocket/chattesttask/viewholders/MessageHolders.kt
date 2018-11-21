@@ -42,7 +42,12 @@ class GeoHolder(v: View) : MessageHolder(v) {
     }
 
     override fun bind(msg: Message) {
-        Glide.with(image.context).load(msg.text).into(image)
+        image.setImageResource(R.drawable.album_drawable)
+        if (msg.text.isNotEmpty()) {
+            val url =
+                "https://maps.googleapis.com/maps/api/staticmap?center=${msg.text}&zoom=12&size=400x400&key=AIzaSyD0ZhCWCD3KHUERYtLz3xMxVfkDDweeL9E"
+            Glide.with(image.context).load(url).into(image)
+        }
     }
 }
 
@@ -54,6 +59,7 @@ class ImageHolder(v: View) : MessageHolder(v) {
     }
 
     override fun bind(msg: Message) {
+        image.setImageResource(R.drawable.album_drawable)
         if (msg.text.isNotEmpty()) {
             FirebaseStorage.getInstance().getReferenceFromUrl(URLDecoder.decode(msg.text, "UTF-8")).downloadUrl.addOnSuccessListener {
                 Glide.with(image.context)
@@ -65,7 +71,6 @@ class ImageHolder(v: View) : MessageHolder(v) {
                             target: Target<Drawable>?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            (target as DrawableImageViewTarget).view.setImageResource(R.drawable.ic_launcher_background)
                             return true
                         }
 
@@ -76,6 +81,7 @@ class ImageHolder(v: View) : MessageHolder(v) {
                             dataSource: DataSource?,
                             isFirstResource: Boolean
                         ): Boolean {
+//                            itemView.forceLayout()
                             return false
                         }
                     })

@@ -1,5 +1,7 @@
 package com.mstoyan.rocket.chattesttask.core
 
+import android.location.Location
+
 class Message {
     var id: Int = 0
     var text: String = ""
@@ -9,6 +11,10 @@ class Message {
     constructor(text: String, msgType: Int){
         this.text = text
         this.msgType = msgType
+    }
+    constructor(location: Location){
+        text = "" + location.latitude + "," + location.longitude
+        msgType = TYPE_GEO
     }
 
     companion object {

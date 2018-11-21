@@ -1,7 +1,9 @@
 package com.mstoyan.rocket.chattesttask.activities
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.Editable
@@ -10,12 +12,15 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mstoyan.rocket.chattesttask.R
 import com.mstoyan.rocket.chattesttask.adapters.MessageAdapter
 import com.mstoyan.rocket.chattesttask.core.DatabaseWrapper
+import com.mstoyan.rocket.chattesttask.core.LocationTracker
 import com.mstoyan.rocket.chattesttask.core.Message
 import com.mstoyan.rocket.chattesttask.core.auth.UserAuth
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -28,11 +33,14 @@ class ChatActivity : AppCompatActivity() {
         private const val RC_SIGN_IN = 9001
         private const val RC_CAMERA = 9002
         private const val RC_GALLERY = 9003
+
+        private const val PERMISSION_LOCATION = 10000
     }
 
     private var userAuth: UserAuth? = null
     private var databaseWrapper: DatabaseWrapper? = null
     private var messagesLayoutManager: LinearLayoutManager? = null
+    private val locationTracker = LocationTracker()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +89,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         fabGeo.setOnClickListener{
-            TODO("Implement")
+            sendGeo()
         }
 
         fabMessage.setOnClickListener {
@@ -122,6 +130,52 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun sendGeo() {
+        hideInterface()
+        if (locationTracker.permissionGranted(this)) {
+            val location = locationTracker.lastLocation
+            if (location == null) {
+                Toast.makeText(this, "No location received yet! Please try later!", Toast.LENGTH_SHORT).show()
+            } else {
+                databaseWrapper!!.saveLocation(location)
+            }
+        } else {
+            if (locationTracker.shouldShowRationale(this)) {
+                Toast.makeText(
+                    this, "Please grant location permission in settings",
+                    Toast.LENGTH_SHORT
+                ).show()
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ), PERMISSION_LOCATION
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ), PERMISSION_LOCATION
+                )
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (locationTracker.permissionGranted(this))
+            locationTracker.init(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (locationTracker.permissionGranted(this))
+            locationTracker.stopTrackingLocation()
+    }
+
     private fun hideTextInput() {
         val imm = getSystemService(
             Context.INPUT_METHOD_SERVICE
@@ -146,8 +200,6 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (RC_SIGN_IN == requestCode){
-        }
         when (requestCode){
             RC_SIGN_IN -> {
                 if (userAuth!!.proceedUserAuth(data, this)){
@@ -207,6 +259,23 @@ class ChatActivity : AppCompatActivity() {
             hideTextInput()
         } else {
             super.onBackPressed()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode){
+            PERMISSION_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED ){
+                    locationTracker.init(this)
+                    sendGeo()
+                } else {
+                    Toast.makeText(
+                        this, "Please grant location permission in settings",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 }

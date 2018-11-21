@@ -45,7 +45,8 @@ class UserAuth(activity: Activity) {
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        Toast.makeText(activity, "Authenticated!)",
+                        firebaseUser = firebaseAuth.currentUser
+                        Toast.makeText(activity, "Authenticated!",
                             Toast.LENGTH_SHORT).show()
                     }
                 }

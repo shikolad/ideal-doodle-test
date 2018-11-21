@@ -2,6 +2,7 @@ package com.mstoyan.rocket.chattesttask.core
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.location.Location
 import android.net.Uri
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -85,5 +86,11 @@ class DatabaseWrapper {
                     TODO("add error handling")
                 }
             }
+    }
+
+    fun saveLocation(location: Location){
+        val tempMessage = Message(location)
+        database.child(MESSAGES_KEY).push()
+            .setValue(tempMessage)
     }
 }
